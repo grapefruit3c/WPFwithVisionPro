@@ -9,6 +9,14 @@
 
 ---
 
+## 效果展示
+
+![运行效果](images/screenshot-run.png)
+
+> 加载 QuickBuild VPP（零件尺寸测量），喂入 `.idb` 测试图像，运行后显示区叠加绿色 ROI 框、红色测量结果（宽度：110.89）及投影数据曲线。
+
+---
+
 ## 项目简介
 
 WPFwithVisionPro 是一个 WPF 用户控件，用于在自有程序中加载和运行 Cognex VisionPro 的 `.vpp` 项目文件。无需打开 VisionPro QuickBuild 或 ToolBlock 编辑器，即可：
@@ -44,6 +52,8 @@ WPFwithVisionPro/
 │   └── VisionProHostControl.xaml.cs       # 核心逻辑（加载/枚举/运行/显示）
 ├── Core/
 │   └── CogImageHelper.cs                  # 图像转换（Bitmap → ICogImage / .idb 读取）
+├── images/
+│   └── screenshot-run.png                 # 运行效果截图
 ├── App.xaml / App.xaml.cs                 # 应用入口
 ├── MainWindow.xaml / MainWindow.xaml.cs   # 主窗口（宿主 VisionProHostControl）
 ├── VisionProVppHost.csproj                # 工程文件（x86 / net48）
