@@ -18,6 +18,8 @@ namespace VisionFramework.App.ViewModels
         private IVisionAlgorithm _algorithm;
         private ICogImage _currentImage;
 
+        public string CurrentVppPath { get; private set; }
+
         public ObservableCollection<string> Logs { get; } = new ObservableCollection<string>();
         public ObservableCollection<TerminalInfo> InputTerminals { get; } = new ObservableCollection<TerminalInfo>();
         public ObservableCollection<TerminalInfo> OutputTerminals { get; } = new ObservableCollection<TerminalInfo>();
@@ -50,6 +52,7 @@ namespace VisionFramework.App.ViewModels
             {
                 _algorithm?.Dispose();
                 _algorithm = AlgorithmFactory.Create(dlg.FileName);
+                CurrentVppPath = dlg.FileName;
 
                 VppInfo = $"类型: {_algorithm.Kind}\r\n路径: {Path.GetFileName(dlg.FileName)}";
                 InputTerminals.Clear();
@@ -100,7 +103,7 @@ namespace VisionFramework.App.ViewModels
             catch (Exception ex) { Log("运行失败: " + ex.Message); StatusText = "错误"; }
         }
 
-        private void Log(string msg)
+        public void Log(string msg)
         {
             var line = $"[{DateTime.Now:HH:mm:ss}] {msg}";
             Application.Current?.Dispatcher.Invoke(() =>

@@ -1,0 +1,47 @@
+<Window x:Class="VisionFramework.UI.Views.SystemInfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="系统信息" Height="320" Width="400"
+        WindowStartupLocation="CenterOwner"
+        Background="#FF1E1E2E" ResizeMode="NoResize">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="VisionFramework" FontSize="24" FontWeight="Bold"
+                   Foreground="#7B68EE" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+        <TextBlock Grid.Row="1" Text="机器视觉检测系统" FontSize="13" Foreground="#888"
+                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+        <Border Grid.Row="2" Background="#FF2D2D3F" CornerRadius="4" Padding="16,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="32"/>
+                    <RowDefinition Height="32"/>
+                    <RowDefinition Height="32"/>
+                    <RowDefinition Height="32"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="系统版本：" Foreground="#888" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="0" Grid.Column="1" x:Name="TblVersion" Text="1.0.0" Foreground="#CCC" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="设计者：" Foreground="#888" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="1" Grid.Column="1" x:Name="TblDesigner" Text="姜泽凯" Foreground="#CCC" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="构建日期：" Foreground="#888" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="2" Grid.Column="1" x:Name="TblBuildDate" Text="2026-08-16" Foreground="#CCC" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="运行环境：" Foreground="#888" VerticalAlignment="Center"/>
+                <TextBlock Grid.Row="3" Grid.Column="1" x:Name="TblRuntime" Text=".NET Framework 4.8" Foreground="#CCC" VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <TextBlock Grid.Row="4" Text="© 2026 姜泽凯. All rights reserved."
+                   Foreground="#555" FontSize="11" HorizontalAlignment="Center" Margin="0,16,0,0"/>
+    </Grid>
+</Window>

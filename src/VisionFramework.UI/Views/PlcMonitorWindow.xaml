@@ -1,0 +1,48 @@
+<Window x:Class="VisionFramework.UI.Views.PlcMonitorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="PLC 信号监控" Height="500" Width="640"
+        WindowStartupLocation="CenterOwner"
+        Background="#FF1E1E2E">
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <Button x:Name="BtnAddSignal" Content="+ 添加信号" Width="90" Height="28"
+                    Background="#FF7B68EE" Foreground="White" BorderThickness="0" Cursor="Hand"
+                    Click="BtnAddSignal_Click"/>
+            <Button x:Name="BtnRemoveSignal" Content="- 删除选中" Width="90" Height="28" Margin="8,0,0,0"
+                    Background="#FF3D3D50" Foreground="White" BorderThickness="0" Cursor="Hand"
+                    Click="BtnRemoveSignal_Click"/>
+            <CheckBox x:Name="ChkAutoRefresh" Content="自动刷新" Foreground="#CCC" Margin="16,0,0,0" VerticalAlignment="Center" IsChecked="True"/>
+            <TextBlock x:Name="TblStatus" Text="● 未连接" Foreground="#FF3B30" Margin="16,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="1" x:Name="DgSignals" Background="#FF2D2D3F" Foreground="#CCC"
+                  BorderBrush="#444" RowBackground="#FF2D2D3F" AlternatingRowBackground="#FF262638"
+                  HeadersVisibility="Column" GridLinesVisibility="Horizontal" 
+                  AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                  SelectionMode="Single" SelectionUnit="FullRow">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="信号名称" Binding="{Binding Name}" Width="120"/>
+                <DataGridTextColumn Header="PLC 地址" Binding="{Binding Address}" Width="120"/>
+                <DataGridTextColumn Header="数据类型" Binding="{Binding DataType}" Width="80"/>
+                <DataGridTextColumn Header="当前值" Binding="{Binding Value}" Width="100"/>
+                <DataGridTextColumn Header="上次更新" Binding="{Binding LastUpdate}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="手动读取" Width="80" Height="28" Margin="0,0,8,0"
+                    Background="#FF3D3D50" Foreground="White" BorderThickness="0" Cursor="Hand"
+                    Click="BtnManualRead_Click"/>
+            <Button Content="关闭" Width="80" Height="28"
+                    Background="#FF3D3D50" Foreground="White" BorderThickness="0" Cursor="Hand"
+                    Click="BtnClose_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
