@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace VisionProVppHost
+namespace VisionFramework.App
 {
     public partial class App : Application
     {

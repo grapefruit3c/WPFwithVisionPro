@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <Platforms>x86</Platforms>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>VisionFramework.VisionPro</RootNamespace>
+    <CognexDir>C:\Program Files (x86)\Cognex\VisionPro</CognexDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VisionFramework.Core\VisionFramework.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Cognex.VisionPro.Core">
+      <HintPath>$(CognexDir)\ReferencedAssemblies\Cognex.VisionPro.Core.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Cognex.VisionPro">
+      <HintPath>$(CognexDir)\ReferencedAssemblies\Cognex.VisionPro.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Cognex.VisionPro.QuickBuild.Core">
+      <HintPath>$(CognexDir)\ReferencedAssemblies\Cognex.VisionPro.QuickBuild.Core.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Cognex.VisionPro.ToolGroup">
+      <HintPath>$(CognexDir)\ReferencedAssemblies\Cognex.VisionPro.ToolGroup.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Cognex.VisionPro.ImageFile">
+      <HintPath>$(CognexDir)\ReferencedAssemblies\Cognex.VisionPro.ImageFile.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+</Project>

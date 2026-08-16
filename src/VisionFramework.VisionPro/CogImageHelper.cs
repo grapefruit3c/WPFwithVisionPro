@@ -5,48 +5,29 @@ using System.IO;
 using Cognex.VisionPro;
 using Cognex.VisionPro.ImageFile;
 
-namespace VisionProVppHost.Core
+namespace VisionFramework.VisionPro
 {
     /// <summary>
-    /// 把磁盘图像转换为 VisionPro 的 ICogImage。
-    /// 支持 VisionPro 原生格式（.idb/.cdb）和标准位图（.bmp/.jpg/.png/.tif）。
+    /// 图像转换工具：磁盘图像 → ICogImage。
+    /// 支持 VisionPro .idb/.cdb 和标准位图。
+    /// 从原 CogImageHelper 迁移，增加多图索引支持。
     /// </summary>
     public static class CogImageHelper
     {
-        /// <summary>
-        /// 加载图像文件为 ICogImage。
-        /// .idb/.cdb 文件使用 CogImageFile 读取（可能包含多张图，默认取第一张）；
-        /// 标准位图使用 Bitmap → CogImage8Grey 转换。
-        /// </summary>
         public static ICogImage LoadAsCogImage(string path)
         {
             string ext = Path.GetExtension(path).ToLowerInvariant();
-
-            // VisionPro 原生图像格式：.idb / .cdb
             if (ext == ".idb" || ext == ".cdb")
-            {
-                return LoadFromCogImageFile(path);
-            }
-
-            // 标准位图格式
+                return LoadFromCogImageFile(path, 0);
             using (var src = new Bitmap(path))
             {
-                Bitmap bmp8 = To8bppGrayscale(src);
-                try
-                {
-                    return new CogImage8Grey(bmp8);
-                }
-                finally
-                {
-                    bmp8.Dispose();
-                }
+                var bmp8 = To8bppGrayscale(src);
+                try { return new CogImage8Grey(bmp8); }
+                finally { bmp8.Dispose(); }
             }
         }
 
-        /// <summary>
-        /// 使用 CogImageFile 加载 .idb/.cdb 文件，返回第一张图像。
-        /// </summary>
-        private static ICogImage LoadFromCogImageFile(string path)
+        public static ICogImage LoadFromCogImageFile(string path, int index = 0)
         {
             var imageFile = new CogImageFile();
             imageFile.Open(path, CogImageFileModeConstants.Read);
@@ -54,25 +35,27 @@ namespace VisionProVppHost.Core
             {
                 if (imageFile.Count == 0)
                     throw new InvalidDataException("图像文件中不包含任何图像。");
-                return imageFile[0];
+                return imageFile[System.Math.Min(index, imageFile.Count - 1)];
             }
-            finally
-            {
-                imageFile.Close();
-            }
+            finally { imageFile.Close(); }
         }
 
-        private static Bitmap To8bppGrayscale(Bitmap src)
+        public static int GetImageCount(string path)
+        {
+            var imageFile = new CogImageFile();
+            imageFile.Open(path, CogImageFileModeConstants.Read);
+            try { return imageFile.Count; }
+            finally { imageFile.Close(); }
+        }
+
+        public static Bitmap To8bppGrayscale(Bitmap src)
         {
             if (src.PixelFormat == PixelFormat.Format8bppIndexed)
                 return new Bitmap(src);
-
             var dst = new Bitmap(src.Width, src.Height, PixelFormat.Format8bppIndexed);
             var pal = dst.Palette;
-            for (int i = 0; i < 256; i++)
-                pal.Entries[i] = Color.FromArgb(i, i, i);
+            for (int i = 0; i < 256; i++) pal.Entries[i] = Color.FromArgb(i, i, i);
             dst.Palette = pal;
-
             using (var g = Graphics.FromImage(dst))
             {
                 var cm = new ColorMatrix(new[]
@@ -86,8 +69,7 @@ namespace VisionProVppHost.Core
                 using (var ia = new ImageAttributes())
                 {
                     ia.SetColorMatrix(cm);
-                    g.DrawImage(src,
-                        new Rectangle(0, 0, src.Width, src.Height),
+                    g.DrawImage(src, new Rectangle(0, 0, src.Width, src.Height),
                         0, 0, src.Width, src.Height, GraphicsUnit.Pixel, ia);
                 }
             }

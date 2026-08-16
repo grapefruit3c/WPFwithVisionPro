@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Platforms>x86</Platforms>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>VisionFramework.App</RootNamespace>
+    <AssemblyName>VisionFramework</AssemblyName>
+    <CognexDir>C:\Program Files (x86)\Cognex\VisionPro</CognexDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VisionFramework.Core\VisionFramework.Core.csproj" />
+    <ProjectReference Include="..\VisionFramework.Devices\VisionFramework.Devices.csproj" />
+    <ProjectReference Include="..\VisionFramework.VisionPro\VisionFramework.VisionPro.csproj" />
+    <ProjectReference Include="..\VisionFramework.System\VisionFramework.System.csproj" />
+    <ProjectReference Include="..\VisionFramework.UI\VisionFramework.UI.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Cognex.VisionPro.Core">
+      <HintPath>$(CognexDir)\ReferencedAssemblies\Cognex.VisionPro.Core.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Cognex.VisionPro">
+      <HintPath>$(CognexDir)\ReferencedAssemblies\Cognex.VisionPro.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Cognex.VisionPro.Display.Controls">
+      <HintPath>$(CognexDir)\ReferencedAssemblies\Cognex.VisionPro.Display.Controls.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="Cognex.VisionPro.Controls">
+      <HintPath>$(CognexDir)\ReferencedAssemblies\Cognex.VisionPro.Controls.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+  </ItemGroup>
+</Project>
