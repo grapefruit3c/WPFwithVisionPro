@@ -22,7 +22,7 @@ namespace VisionFramework.App
             InitializeComponent();
             _vm = new MainViewModel(DisplayControl);
             DataContext = _vm;
-            TxtVisionProPath.Text = @"E:\Software\Cognex\VisionPro\bin\QuickBuild.exe";
+            TxtVisionProPath.Text = @"E:\Software\Cognex\VisionPro\bin\Cognex.VisionPro.QuickBuild.exe";
             InitStatusIndicators();
             UpdateLoginDisplay();
         }
