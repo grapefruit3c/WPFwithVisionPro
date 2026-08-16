@@ -22,6 +22,7 @@ namespace VisionFramework.App
             InitializeComponent();
             _vm = new MainViewModel(DisplayControl);
             DataContext = _vm;
+            TxtVisionProPath.Text = @"E:\Software\Cognex\VisionPro\bin\QuickBuild.exe";
             InitStatusIndicators();
             UpdateLoginDisplay();
         }
@@ -148,98 +149,46 @@ namespace VisionFramework.App
             dlg.ShowDialog();
         }
 
-        // ═══ 进入程序（打开 VisionPro） ═══
-        private string _visionProExePath = null;
-
-        private string FindVisionProExe()
+        // ═══ VisionPro 路径配置 ═══
+        private void BtnBrowseVp_Click(object sender, RoutedEventArgs e)
         {
-            // 1. 已保存的路径
-            if (!string.IsNullOrEmpty(_visionProExePath) && File.Exists(_visionProExePath))
-                return _visionProExePath;
-
-            // 2. 从注册表查找
-            try
+            var dlg = new Microsoft.Win32.OpenFileDialog
             {
-                using (var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(
-                    @"SOFTWARE\WOW6432Node\Cognex\VisionPro"))
-                {
-                    if (key?.GetValue("InstallDir") is string installDir)
-                    {
-                        string exe = Path.Combine(installDir, "bin", "QuickBuild.exe");
-                        if (File.Exists(exe)) { _visionProExePath = exe; return exe; }
-                    }
-                }
-                using (var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(
-                    @"SOFTWARE\Cognex\VisionPro"))
-                {
-                    if (key?.GetValue("InstallDir") is string installDir)
-                    {
-                        string exe = Path.Combine(installDir, "bin", "QuickBuild.exe");
-                        if (File.Exists(exe)) { _visionProExePath = exe; return exe; }
-                    }
-                }
-            }
-            catch { }
-
-            // 3. 常见安装路径
-            string[] candidates = {
-                @"C:\Program Files (x86)\Cognex\VisionPro\bin\QuickBuild.exe",
-                @"C:\Program Files\Cognex\VisionPro\bin\QuickBuild.exe",
-                @"C:\Program Files (x86)\Cognex\VisionPro\bin\CogJobManager.exe",
-                @"C:\Program Files\Cognex\VisionPro\bin\CogJobManager.exe"
+                Title = "选择 QuickBuild.exe",
+                Filter = "QuickBuild.exe|QuickBuild.exe|可执行文件|*.exe|所有文件|*.*",
+                InitialDirectory = Path.GetDirectoryName(TxtVisionProPath.Text)
             };
-            foreach (var c in candidates)
+            if (dlg.ShowDialog() == true)
             {
-                if (File.Exists(c)) { _visionProExePath = c; return c; }
+                TxtVisionProPath.Text = dlg.FileName;
+                _vm?.Log($"VisionPro 路径已更新: {dlg.FileName}");
             }
-
-            return null;
         }
 
+        // ═══ 进入程序（打开 VisionPro） ═══
         private void BtnOpenVpp_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                string exePath = FindVisionProExe();
-
-                // 未找到 → 让用户手动选择
-                if (exePath == null)
+                string exePath = TxtVisionProPath.Text.Trim();
+                if (string.IsNullOrEmpty(exePath) || !File.Exists(exePath))
                 {
-                    var dlg = new Microsoft.Win32.OpenFileDialog
-                    {
-                        Title = "请选择 VisionPro QuickBuild.exe",
-                        Filter = "QuickBuild.exe|QuickBuild.exe|可执行文件|*.exe|所有文件|*.*"
-                    };
-                    if (dlg.ShowDialog() != true)
-                    {
-                        _vm?.Log("已取消选择 VisionPro 程序路径");
-                        return;
-                    }
-                    exePath = dlg.FileName;
-                    _visionProExePath = exePath;
-                    _vm?.Log($"已设置 VisionPro 路径: {exePath}");
-                }
-
-                if (File.Exists(exePath))
-                {
-                    string vppPath = _vm?.CurrentVppPath;
-                    var psi = new ProcessStartInfo
-                    {
-                        FileName = exePath,
-                        UseShellExecute = true
-                    };
-                    if (!string.IsNullOrEmpty(vppPath) && File.Exists(vppPath))
-                        psi.Arguments = $"\"{vppPath}\"";
-
-                    Process.Start(psi);
-                    _vm?.Log("已启动 VisionPro 程序，修改后请手动保存");
-                }
-                else
-                {
-                    MessageBox.Show("指定的路径无效，请重新选择。", "提示",
+                    MessageBox.Show("VisionPro 路径无效，请在系统配置中设置 QuickBuild.exe 路径。", "提示",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
-                    _visionProExePath = null;
+                    return;
                 }
+
+                string vppPath = _vm?.CurrentVppPath;
+                var psi = new ProcessStartInfo
+                {
+                    FileName = exePath,
+                    UseShellExecute = true
+                };
+                if (!string.IsNullOrEmpty(vppPath) && File.Exists(vppPath))
+                    psi.Arguments = $"\"{vppPath}\"";
+
+                Process.Start(psi);
+                _vm?.Log("已启动 VisionPro 程序，修改后请手动保存");
             }
             catch (Exception ex)
             {
