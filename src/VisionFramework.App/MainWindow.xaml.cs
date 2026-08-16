@@ -15,6 +15,7 @@ namespace VisionFramework.App
         private PlcConfig _plcConfig = new PlcConfig();
         private CameraConfig _cameraConfig = new CameraConfig();
         private SaveImageConfig _saveImageConfig = new SaveImageConfig();
+        private bool _isLoggedIn = false;
 
         public MainWindow()
         {
@@ -22,6 +23,31 @@ namespace VisionFramework.App
             _vm = new MainViewModel(DisplayControl);
             DataContext = _vm;
             InitStatusIndicators();
+            UpdateLoginDisplay();
+        }
+
+        // ═══ 登录验证 ═══
+        private bool RequireLogin()
+        {
+            if (_isLoggedIn) return true;
+
+            var login = new LoginWindow { Owner = this };
+            if (login.ShowDialog() == true && login.LoginSuccess)
+            {
+                _isLoggedIn = true;
+                UpdateLoginDisplay();
+                _vm?.Log("用户已登录: admin");
+                return true;
+            }
+            return false;
+        }
+
+        private void UpdateLoginDisplay()
+        {
+            TblUser.Text = _isLoggedIn ? "admin" : "未登录";
+            TblUser.Foreground = _isLoggedIn
+                ? new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0xCC, 0xCC, 0xCC))
+                : System.Windows.Media.Brushes.Gray;
         }
 
         // ═══ 状态指示灯初始化 ═══
@@ -68,9 +94,10 @@ namespace VisionFramework.App
             }
         }
 
-        // ═══ 配置弹窗 ═══
+        // ═══ 配置弹窗（需登录） ═══
         private void BtnPlcConfig_Click(object sender, RoutedEventArgs e)
         {
+            if (!RequireLogin()) return;
             var dlg = new PlcConfigWindow(_plcConfig);
             if (dlg.ShowDialog() == true)
             {
@@ -81,6 +108,7 @@ namespace VisionFramework.App
 
         private void BtnCameraConfig_Click(object sender, RoutedEventArgs e)
         {
+            if (!RequireLogin()) return;
             var dlg = new CameraConfigWindow(_cameraConfig);
             if (dlg.ShowDialog() == true)
             {
@@ -91,6 +119,7 @@ namespace VisionFramework.App
 
         private void BtnSaveImageConfig_Click(object sender, RoutedEventArgs e)
         {
+            if (!RequireLogin()) return;
             var dlg = new SaveImageConfigWindow(_saveImageConfig);
             if (dlg.ShowDialog() == true)
             {
@@ -108,6 +137,7 @@ namespace VisionFramework.App
 
         private void BtnUserSettings_Click(object sender, RoutedEventArgs e)
         {
+            if (!RequireLogin()) return;
             var dlg = new UserSettingsWindow("admin") { Owner = this };
             dlg.ShowDialog();
         }
