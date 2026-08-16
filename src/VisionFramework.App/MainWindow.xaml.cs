@@ -149,28 +149,80 @@ namespace VisionFramework.App
         }
 
         // ═══ 进入程序（打开 VisionPro） ═══
+        private string _visionProExePath = null;
+
+        private string FindVisionProExe()
+        {
+            // 1. 已保存的路径
+            if (!string.IsNullOrEmpty(_visionProExePath) && File.Exists(_visionProExePath))
+                return _visionProExePath;
+
+            // 2. 从注册表查找
+            try
+            {
+                using (var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(
+                    @"SOFTWARE\WOW6432Node\Cognex\VisionPro"))
+                {
+                    if (key?.GetValue("InstallDir") is string installDir)
+                    {
+                        string exe = Path.Combine(installDir, "bin", "QuickBuild.exe");
+                        if (File.Exists(exe)) { _visionProExePath = exe; return exe; }
+                    }
+                }
+                using (var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(
+                    @"SOFTWARE\Cognex\VisionPro"))
+                {
+                    if (key?.GetValue("InstallDir") is string installDir)
+                    {
+                        string exe = Path.Combine(installDir, "bin", "QuickBuild.exe");
+                        if (File.Exists(exe)) { _visionProExePath = exe; return exe; }
+                    }
+                }
+            }
+            catch { }
+
+            // 3. 常见安装路径
+            string[] candidates = {
+                @"C:\Program Files (x86)\Cognex\VisionPro\bin\QuickBuild.exe",
+                @"C:\Program Files\Cognex\VisionPro\bin\QuickBuild.exe",
+                @"C:\Program Files (x86)\Cognex\VisionPro\bin\CogJobManager.exe",
+                @"C:\Program Files\Cognex\VisionPro\bin\CogJobManager.exe"
+            };
+            foreach (var c in candidates)
+            {
+                if (File.Exists(c)) { _visionProExePath = c; return c; }
+            }
+
+            return null;
+        }
+
         private void BtnOpenVpp_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                string vppPath = _vm?.CurrentVppPath;
-                var cognexDir = @"C:\Program Files (x86)\Cognex\VisionPro\bin";
-                string exePath = Path.Combine(cognexDir, "QuickBuild.exe");
+                string exePath = FindVisionProExe();
 
-                if (!File.Exists(exePath))
+                // 未找到 → 让用户手动选择
+                if (exePath == null)
                 {
-                    foreach (var candidate in new[]
+                    var dlg = new Microsoft.Win32.OpenFileDialog
                     {
-                        @"C:\Program Files\Cognex\VisionPro\bin\QuickBuild.exe",
-                        @"C:\Program Files (x86)\Cognex\VisionPro\bin\CogJobManager.exe"
-                    })
+                        Title = "请选择 VisionPro QuickBuild.exe",
+                        Filter = "QuickBuild.exe|QuickBuild.exe|可执行文件|*.exe|所有文件|*.*"
+                    };
+                    if (dlg.ShowDialog() != true)
                     {
-                        if (File.Exists(candidate)) { exePath = candidate; break; }
+                        _vm?.Log("已取消选择 VisionPro 程序路径");
+                        return;
                     }
+                    exePath = dlg.FileName;
+                    _visionProExePath = exePath;
+                    _vm?.Log($"已设置 VisionPro 路径: {exePath}");
                 }
 
                 if (File.Exists(exePath))
                 {
+                    string vppPath = _vm?.CurrentVppPath;
                     var psi = new ProcessStartInfo
                     {
                         FileName = exePath,
@@ -184,8 +236,9 @@ namespace VisionFramework.App
                 }
                 else
                 {
-                    MessageBox.Show("未找到 VisionPro QuickBuild.exe，请确认安装路径。", "提示",
+                    MessageBox.Show("指定的路径无效，请重新选择。", "提示",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
+                    _visionProExePath = null;
                 }
             }
             catch (Exception ex)

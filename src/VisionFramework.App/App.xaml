@@ -22,5 +22,26 @@
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="FontSize" Value="12"/>
         </Style>
+        <!-- 全局深色主题：ComboBox 下拉项 -->
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="#FF2D2D3F"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="8,4"/>
+        </Style>
+        <!-- 全局深色主题：TextBox -->
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#FF2D2D3F"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#444"/>
+        </Style>
+        <!-- 全局深色主题：CheckBox -->
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#CCC"/>
+        </Style>
+        <!-- 全局深色主题：GroupBox -->
+        <Style TargetType="GroupBox">
+            <Setter Property="Foreground" Value="#AAA"/>
+            <Setter Property="BorderBrush" Value="#333"/>
+        </Style>
     </Application.Resources>
 </Application>

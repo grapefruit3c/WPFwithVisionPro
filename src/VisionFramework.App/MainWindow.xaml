@@ -81,8 +81,8 @@
                         <TextBlock Text="{Binding VppInfo}" Foreground="#CCC" FontSize="12" TextWrapping="Wrap"/>
                     </GroupBox>
 
-                    <!-- 输入终端 -->
-                    <GroupBox Header="输入终端">
+                    <!-- 输入终端 / Job 列表 -->
+                    <GroupBox Header="Job 列表 / 输入终端">
                         <ItemsControl ItemsSource="{Binding InputTerminals}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
