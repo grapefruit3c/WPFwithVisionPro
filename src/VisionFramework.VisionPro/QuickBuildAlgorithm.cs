@@ -77,6 +77,8 @@ namespace VisionFramework.VisionPro
                 if (vt is CogToolBlock tb)
                     foreach (CogToolBlockTerminal t in tb.Outputs)
                         outputs[t.Name] = t.Value;
+                else
+                    outputs["提示"] = "该 Job 视觉工具非 CogToolBlock，请查看显示区记录。";
 
                 var result = DetectionResult.Success(outputs);
                 result.DurationMs = sw.ElapsedMilliseconds;
@@ -97,7 +99,10 @@ namespace VisionFramework.VisionPro
             }
         }
 
-        /// <summary>多策略图像注入：终端→脚本终端→子工具→反射。</summary>
+        /// <summary>
+        /// 多策略图像注入。对 CogToolGroup 必须优先遍历子工具设置 CogInputImageTool.InputImage，
+        /// 不能仅靠 SetScriptTerminalData（它可能返回 true 但图像未真正注入）。
+        /// </summary>
         private void InjectImage(ICogTool vt, ICogImage img)
         {
             if (vt is CogToolBlock tb)
@@ -110,31 +115,27 @@ namespace VisionFramework.VisionPro
             }
             else if (vt is CogToolGroup tg)
             {
-                // 策略1：脚本终端
+                // 策略1（优先）：遍历子工具，直接设置 CogInputImageTool.InputImage 和 CogToolBlock 图像终端
+                foreach (var subTool in tg.Tools)
+                {
+                    if (subTool is CogToolBlock subTb)
+                        foreach (CogToolBlockTerminal t in subTb.Inputs)
+                            if (typeof(ICogImage).IsAssignableFrom(t.ValueType))
+                                t.Value = img;
+                    TrySetInputImage(subTool, img);
+                }
+
+                // 策略2（补充）：脚本终端
                 string[] keys = { "InputImage", "Image", "inputImage", "image" };
-                bool ok = false;
                 foreach (string key in keys)
                 {
                     try
                     {
                         var method = tg.GetType().GetMethod("SetScriptTerminalData", new[] { typeof(string), typeof(object) });
-                        if (method != null && (bool)method.Invoke(tg, new object[] { key, img }))
-                        { ok = true; break; }
+                        if (method != null)
+                            method.Invoke(tg, new object[] { key, img });
                     }
                     catch { }
-                }
-                // 策略2：遍历子工具
-                if (!ok)
-                {
-                    foreach (var subTool in tg.Tools)
-                    {
-                        if (subTool is CogToolBlock subTb)
-                            foreach (CogToolBlockTerminal t in subTb.Inputs)
-                                if (typeof(ICogImage).IsAssignableFrom(t.ValueType))
-                                { t.Value = img; ok = true; }
-                        else if (TrySetInputImage(subTool, img))
-                            ok = true;
-                    }
                 }
             }
             else
@@ -180,6 +181,8 @@ namespace VisionFramework.VisionPro
             if (job?.VisionTool is CogToolBlock tb)
                 foreach (CogToolBlockTerminal t in tb.Outputs)
                     list.Add(new TerminalInfo { Name = t.Name, TypeName = t.ValueType?.Name, Value = t.Value, IsOutput = true });
+            else
+                list.Add(new TerminalInfo { Name = "提示", Value = "该 Job 视觉工具非 CogToolBlock，请查看显示区记录。", IsOutput = true });
             return list;
         }
 
