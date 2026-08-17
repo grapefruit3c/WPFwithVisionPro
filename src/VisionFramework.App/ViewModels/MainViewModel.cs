@@ -48,19 +48,24 @@ namespace VisionFramework.App.ViewModels
         {
             var dlg = new Microsoft.Win32.OpenFileDialog { Filter = "VisionPro VPP|*.vpp" };
             if (dlg.ShowDialog() != true) return;
+            LoadVppFromPath(dlg.FileName);
+        }
+
+        public void LoadVppFromPath(string vppPath)
+        {
             try
             {
                 _algorithm?.Dispose();
-                _algorithm = AlgorithmFactory.Create(dlg.FileName);
-                CurrentVppPath = dlg.FileName;
+                _algorithm = AlgorithmFactory.Create(vppPath);
+                CurrentVppPath = vppPath;
 
-                VppInfo = $"类型: {_algorithm.Kind}\r\n路径: {Path.GetFileName(dlg.FileName)}";
+                VppInfo = $"类型: {_algorithm.Kind}\r\n路径: {Path.GetFileName(vppPath)}";
                 InputTerminals.Clear();
                 foreach (var t in _algorithm.GetInputTerminals())
                     InputTerminals.Add(t);
                 OutputTerminals.Clear();
 
-                Log($"已加载 {_algorithm.Name}: {Path.GetFileName(dlg.FileName)}");
+                Log($"已加载 {_algorithm.Name}: {Path.GetFileName(vppPath)}");
                 StatusText = $"{_algorithm.Name} 已就绪";
             }
             catch (Exception ex) { Log("加载失败: " + ex.Message); }

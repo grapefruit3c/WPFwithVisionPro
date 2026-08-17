@@ -36,6 +36,7 @@ namespace VisionFramework.UI.Controls
 
         public void ShowRecord(ICogImage image, ICogRecord record)
         {
+            // 先设 Image 背景，再设 Record 叠加图形层（顺序不能反）
             if (image != null)
             { try { _recDisplay.Image = image; } catch { } }
             _recDisplay.Record = record;

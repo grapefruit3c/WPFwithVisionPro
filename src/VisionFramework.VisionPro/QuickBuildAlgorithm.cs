@@ -24,6 +24,7 @@ namespace VisionFramework.VisionPro
         private CogJobManager _jobManager;
         private int _selectedJobIndex;
         private ICogRecord _lastRecord;
+        private bool _needsWarmup;
 
         public int JobCount => _jobManager?.JobCount ?? 0;
 
@@ -36,6 +37,7 @@ namespace VisionFramework.VisionPro
         {
             _jobManager = (CogJobManager)CogSerializer.LoadObjectFromFile(vppPath);
             _selectedJobIndex = 0;
+            _needsWarmup = true;
             IsInitialized = true;
         }
 
@@ -60,12 +62,25 @@ namespace VisionFramework.VisionPro
                 {
                     // 有手动图片：绕过 AcqFifo，直接喂图给视觉工具
                     InjectImage(vt, cogImage);
+
+                    // 预热运行：VPP 加载后首次运行工具内部仍是旧状态，需先跑一次丢弃结果
+                    if (_needsWarmup)
+                    {
+                        vt.Run();
+                        _needsWarmup = false;
+                    }
+
                     vt.Run();
                     record = vt.CreateLastRunRecord() ?? job.OwnedIndependent.RealTimeResult();
                 }
                 else
                 {
                     // 无手动图片：走 Job 正常流程
+                    if (_needsWarmup)
+                    {
+                        job.Run();
+                        _needsWarmup = false;
+                    }
                     job.Run();
                     record = job.OwnedIndependent.RealTimeResult();
                 }
@@ -191,6 +206,7 @@ namespace VisionFramework.VisionPro
         public void Dispose()
         {
             _jobManager = null;
+            _needsWarmup = false;
             IsInitialized = false;
         }
     }

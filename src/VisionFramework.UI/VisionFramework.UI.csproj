@@ -11,6 +11,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\VisionFramework.Core\VisionFramework.Core.csproj" />
+    <ProjectReference Include="..\VisionFramework.Devices\VisionFramework.Devices.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Cognex.VisionPro.Core">

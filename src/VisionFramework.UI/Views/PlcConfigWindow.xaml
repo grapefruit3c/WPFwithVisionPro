@@ -1,7 +1,7 @@
 <Window x:Class="VisionFramework.UI.Views.PlcConfigWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="PLC 通信配置" Height="520" Width="480"
+        Title="PLC 通信配置" Height="620" Width="480"
         WindowStartupLocation="CenterScreen"
         Background="#FF1E1E2E" ResizeMode="NoResize">
     <Grid Margin="20">
@@ -25,6 +25,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="32"/>
                     <RowDefinition Height="32"/>
+                    <RowDefinition Height="32"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="PLC IP：" Foreground="#CCC" VerticalAlignment="Center"/>
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtIp" Height="28" Background="#FF2D2D3F" Foreground="White" BorderBrush="#444" Padding="6,2" VerticalContentAlignment="Center"/>
@@ -37,6 +38,15 @@
                     <ComboBoxItem Content="Omron (欧姆龙)"/>
                     <ComboBoxItem Content="Modbus TCP"/>
                 </ComboBox>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Rack/Slot：" Foreground="#CCC" VerticalAlignment="Center"/>
+                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                    <TextBox x:Name="TxtRack" Width="60" Height="28" Background="#FF2D2D3F" Foreground="White" BorderBrush="#444" Padding="6,2" VerticalContentAlignment="Center" Text="0"/>
+                    <TextBlock Text="/" Foreground="#888" VerticalAlignment="Center" Margin="8,0"/>
+                    <TextBox x:Name="TxtSlot" Width="60" Height="28" Background="#FF2D2D3F" Foreground="White" BorderBrush="#444" Padding="6,2" VerticalContentAlignment="Center" Text="1"/>
+                </StackPanel>
+                <Button Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" x:Name="BtnTestConnection" Content="测试连接" Height="28" Margin="8,0,0,0"
+                        Background="#FF3D3D50" Foreground="White" BorderThickness="0" Cursor="Hand"
+                        Click="BtnTestConnection_Click"/>
             </Grid>
         </GroupBox>
 
@@ -53,6 +63,7 @@
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="触发信号地址：" Foreground="#CCC" VerticalAlignment="Center"/>
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="TxtTrigger" Height="26" Background="#FF2D2D3F" Foreground="White" BorderBrush="#444" Padding="6,2" VerticalContentAlignment="Center"/>
@@ -64,6 +75,8 @@
                 <TextBox Grid.Row="3" Grid.Column="1" x:Name="TxtResultData" Height="26" Background="#FF2D2D3F" Foreground="White" BorderBrush="#444" Padding="6,2" VerticalContentAlignment="Center"/>
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="心跳信号地址：" Foreground="#CCC" VerticalAlignment="Center"/>
                 <TextBox Grid.Row="4" Grid.Column="1" x:Name="TxtHeartbeat" Height="26" Background="#FF2D2D3F" Foreground="White" BorderBrush="#444" Padding="6,2" VerticalContentAlignment="Center"/>
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="程序号地址：" Foreground="#CCC" VerticalAlignment="Center"/>
+                <TextBox Grid.Row="5" Grid.Column="1" x:Name="TxtProgramNumber" Height="26" Background="#FF2D2D3F" Foreground="White" BorderBrush="#444" Padding="6,2" VerticalContentAlignment="Center"/>
             </Grid>
         </GroupBox>
 

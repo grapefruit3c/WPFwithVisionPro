@@ -9,4 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\VisionFramework.Core\VisionFramework.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="HslCommunication" Version="12.9.2" />
+  </ItemGroup>
 </Project>
