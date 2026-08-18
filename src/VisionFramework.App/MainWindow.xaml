@@ -52,6 +52,7 @@
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <ctl:StatusLight x:Name="LightPlc" Label="PLC" Margin="0,0,20,0"/>
                     <ctl:StatusLight x:Name="LightCamera" Label="相机" Margin="0,0,20,0"/>
+                    <ctl:StatusLight x:Name="LightTrigger" Label="触发" Margin="0,0,20,0"/>
                     <ctl:StatusLight x:Name="LightHeartbeat" Label="心跳" Margin="0,0,20,0"/>
                     <ctl:StatusLight x:Name="LightPing" Label="Ping" Margin="0,0,20,0"/>
                     <TextBlock Text="|" Foreground="#444" Margin="0,0,20,0" VerticalAlignment="Center"/>
@@ -129,8 +130,9 @@
                             <Button Grid.Row="1" Grid.Column="0" Content="存图配置" Style="{StaticResource ConfigBtn}" Click="BtnSaveImageConfig_Click"/>
                             <Button Grid.Row="1" Grid.Column="1" Content="PLC 监控" Style="{StaticResource ConfigBtn}" Click="BtnPlcMonitor_Click"/>
                             <Button Grid.Row="2" Grid.Column="0" Content="程序配置" Style="{StaticResource ConfigBtn}" Click="BtnProgramConfig_Click"/>
-                            <Button Grid.Row="2" Grid.Column="1" Content="用户设置" Style="{StaticResource ConfigBtn}" Click="BtnUserSettings_Click"/>
-                            <Button Grid.Row="3" Grid.Column="0" Content="系统信息" Style="{StaticResource ConfigBtn}" Click="BtnSysInfo_Click"/>
+                            <Button Grid.Row="2" Grid.Column="1" Content="检测记录" Style="{StaticResource ConfigBtn}" Click="BtnRecordHistory_Click"/>
+                            <Button Grid.Row="3" Grid.Column="0" Content="用户设置" Style="{StaticResource ConfigBtn}" Click="BtnUserSettings_Click"/>
+                            <Button Grid.Row="3" Grid.Column="1" Content="系统信息" Style="{StaticResource ConfigBtn}" Click="BtnSysInfo_Click"/>
                         </Grid>
                     </GroupBox>
 

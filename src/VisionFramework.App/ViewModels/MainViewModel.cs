@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Cognex.VisionPro;
 using VisionFramework.Core.Algorithms;
+using VisionFramework.Core.Data;
 using VisionFramework.UI.Controls;
 using VisionFramework.UI.ViewModels;
 using VisionFramework.VisionPro;
@@ -15,10 +16,14 @@ namespace VisionFramework.App.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private readonly VisionDisplayControl _display;
+        private readonly DetectionRecordService _recordService = new DetectionRecordService();
         private IVisionAlgorithm _algorithm;
         private ICogImage _currentImage;
 
         public string CurrentVppPath { get; private set; }
+
+        /// <summary>检测记录数据库服务（供记录窗口使用）。</summary>
+        public DetectionRecordService RecordService => _recordService;
 
         public ObservableCollection<string> Logs { get; } = new ObservableCollection<string>();
         public ObservableCollection<TerminalInfo> InputTerminals { get; } = new ObservableCollection<TerminalInfo>();
@@ -104,8 +109,29 @@ namespace VisionFramework.App.ViewModels
 
                 Log($"运行完成 | {(result.IsOk ? "OK" : "NG")} | {result.DurationMs}ms");
                 StatusText = result.IsOk ? "OK" : "NG";
+
+                SaveRecord(result);
             }
             catch (Exception ex) { Log("运行失败: " + ex.Message); StatusText = "错误"; }
+        }
+
+        /// <summary>将本次检测结果保存到 SQLite 数据库。</summary>
+        private void SaveRecord(DetectionResult result)
+        {
+            try
+            {
+                var outputs = string.Join("; ", OutputTerminals.Select(t => $"{t.Name}={t.Value}"));
+                _recordService.Add(new DetectionRecord
+                {
+                    Time = DateTime.Now,
+                    ProductName = "程序1",
+                    VppName = Path.GetFileName(CurrentVppPath ?? ""),
+                    IsOk = result.IsOk,
+                    DurationMs = result.DurationMs,
+                    OutputsJson = outputs
+                });
+            }
+            catch (Exception ex) { Log("保存检测记录失败: " + ex.Message); }
         }
 
         public void Log(string msg)

@@ -6,6 +6,15 @@
 
 ![运行效果](images/screenshot-run.png)
 
+## 功能特性
+
+- **五层架构**：Core / Devices / VisionPro / System / UI / App 分层解耦，接口驱动
+- **多算法支持**：自动识别 CogToolBlock / QuickBuild 类型并枚举输入输出终端
+- **PLC 联机控制**：触发信号自动检测、结果回写、程序号切换、心跳与 Ping 监测
+- **状态指示灯**：PLC / 相机 / 触发 / 心跳 / Ping 实时状态，触发与心跳闪烁提示
+- **检测记录存储**：每次检测自动保存到本地 SQLite（`data/records.db`），支持历史查询与 OK/NG 统计
+- **离线调试**：文件虚拟相机，无需真实硬件即可调试视觉算法
+
 ## 架构设计
 
 ```
@@ -56,7 +65,8 @@ VisionFramework.sln
 │   │   │   └── VisionState.cs             #   状态枚举 + 事件参数
 │   │   └── Data/
 │   │       ├── IConfigProvider.cs         #   配置提供接口
-│   │       └── IResultStorage.cs          #   结果存储接口
+│   │       ├── IResultStorage.cs          #   结果存储接口
+│   │       └── DetectionRecordService.cs  #   SQLite 检测记录存储
 │   │
 │   ├── VisionFramework.Devices/           # 设备层：硬件实现
 │   │   ├── Cameras/
@@ -80,6 +90,8 @@ VisionFramework.sln
 │   │   ├── Controls/
 │   │   │   ├── VisionDisplayControl.xaml  #   双显示区（图像+记录）
 │   │   │   └── VisionDisplayControl.xaml.cs
+│   │   ├── Views/
+│   │   │   └── RecordHistoryWindow.xaml   #   检测记录查看窗口
 │   │   └── ViewModels/
 │   │       ├── ViewModelBase.cs           #   INotifyPropertyChanged 基类
 │   │       └── RelayCommand.cs            #   ICommand 实现
@@ -234,12 +246,27 @@ src\VisionFramework.App\bin\x86\Debug\net48\VisionFramework.exe
 
 ### 使用流程
 
+**手动调试**
+
 1. 点击 **「加载 VPP」** 选择 `.vpp` 文件
 2. 程序自动识别类型（ToolBlock / QuickBuild）并枚举输入输出终端
 3. 点击 **「加载图片」** 选择测试图像（`.idb` / `.bmp` / `.jpg`）
 4. 点击 **「运行」** 执行视觉任务
 5. 查看输出结果和叠加图形显示
 6. 点击 **「适配」** 自适应缩放显示区
+
+**PLC 联机模式**
+
+1. 在 **「PLC 配置」** 中设置 IP/端口、触发地址、结果地址、心跳地址、程序号地址等
+2. 连接 PLC 后，状态栏显示 PLC / 心跳 / Ping 指示灯状态
+3. PLC 发送触发信号时，**「触发」** 指示灯闪烁，软件自动执行检测并回写 OK/NG 结果
+4. PLC 程序号变化时自动切换对应的 VPP 程序
+
+**检测记录**
+
+1. 每次检测完成后自动保存到本地 SQLite 数据库（`data/records.db`）
+2. 点击 **「检测记录」** 打开记录窗口，查看时间 / 产品 / VPP / 结果 / 耗时 / 输出值
+3. 顶部显示总记录数与 OK / NG 统计，支持刷新
 
 ## 扩展指南
 
@@ -341,6 +368,7 @@ public class ModbusPlcCommunicator : IPlcCommunicator
 | Cognex VisionPro | 视觉算法 |
 | HslCommunication | PLC 通信（西门子/三菱/欧姆龙等） |
 | 海康相机 SDK | 图像采集 |
+| SQLite (System.Data.SQLite) | 检测记录本地存储 |
 
 ## License
 
