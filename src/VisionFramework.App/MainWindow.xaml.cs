@@ -67,6 +67,7 @@ namespace VisionFramework.App
         {
             LightPlc.SetState(LightState.Red);
             LightCamera.SetState(LightState.Red);
+            LightTrigger.SetState(LightState.Off);
             LightHeartbeat.SetState(LightState.Off);
             LightPing.SetState(LightState.Off);
             UpdateDiskInfo();
@@ -209,6 +210,9 @@ namespace VisionFramework.App
                     _vm?.Log("收到 PLC 触发信号，开始检测...");
                     _lastTriggerState = true;
 
+                    // 相机触发指示灯闪烁
+                    LightTrigger.SetState(LightState.Yellow, blink: true);
+
                     System.Threading.Tasks.Task.Run(() =>
                     {
                         try
@@ -219,6 +223,7 @@ namespace VisionFramework.App
                                 bool isOk = _vm.StatusText == "OK";
                                 _plc.Write(_plcConfig.ResultAddress, isOk);
                                 _plc.Write(_plcConfig.TriggerAckAddress, false);
+                                LightTrigger.SetState(LightState.Off);
                                 _vm?.Log($"检测完成，结果已回写 PLC: {(isOk ? "OK" : "NG")}");
                             });
                         }
@@ -228,6 +233,7 @@ namespace VisionFramework.App
                             {
                                 _plc.Write(_plcConfig.ResultAddress, false);
                                 _plc.Write(_plcConfig.TriggerAckAddress, false);
+                                LightTrigger.SetState(LightState.Off);
                                 _vm?.Log("检测异常: " + ex.Message);
                             });
                         }
@@ -333,6 +339,12 @@ namespace VisionFramework.App
         {
             var monitor = new PlcMonitorWindow(_plc, _plcConfig) { Owner = this };
             monitor.Show();
+        }
+
+        private void BtnRecordHistory_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new RecordHistoryWindow(_vm.RecordService) { Owner = this };
+            win.Show();
         }
 
         private void BtnUserSettings_Click(object sender, RoutedEventArgs e)
