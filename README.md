@@ -6,6 +6,8 @@
 
 ![运行效果](images/screenshot-run.png)
 
+![运行效果](images/screenshot-run1.png)
+
 ## 功能特性
 
 - **五层架构**：Core / Devices / VisionPro / System / UI / App 分层解耦，接口驱动
