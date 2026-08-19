@@ -10,7 +10,7 @@
 
 ## 功能特性
 
-- **五层架构**：Core / Devices / VisionPro / System / UI / App 分层解耦，接口驱动
+- **五层架构**：Core / Devices / VisionPro / System / UI / App 分层解耦，接口驱动  
 - **多算法支持**：自动识别 CogToolBlock / QuickBuild 类型并枚举输入输出终端
 - **PLC 联机控制**：触发信号自动检测、结果回写、程序号切换、心跳与 Ping 监测
 - **状态指示灯**：PLC / 相机 / 触发 / 心跳 / Ping 实时状态，触发与心跳闪烁提示
